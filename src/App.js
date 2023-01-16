@@ -1,24 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+// import { withStyles } from '@mui/material-ui/styles';
+import Home from './Pages/Home'
+import Menus from './Pages/Menus'
+import Orders from './Pages/Orders'
+import Reservation from './Pages/Reservations';
+import { Layout } from './Layout/Layout';
+import {DashboardNavbar} from './Layout/DashboardNavbar';
+import {Routes, Route} from 'react-router-dom'
+import AppLayout from './Components/AppLayout';
+import Rooms from './Pages/Rooms';
 
+// const theme = withStyles({
+//   typography: {
+//     fontFamily: [
+//       'Poppins',
+      
+//     ].join(','),
+//   }
+// });
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    // <ThemeProvider theme={theme}>
+    <Routes>
+      <Route path='/' element={<AppLayout />}>
+      <Route path='/menus' element={ <Menus/>}/>
+      <Route path="/orders/" element={<Orders />} />
+      <Route path='/reservations' element={ <Reservation/>}/>
+      <Route path='/rooms' element={ <Rooms/>}/>
+      <Route path='/' element={ <Home/>}/>
+      </Route>
+    
+    </Routes>
+    // </ThemeProvider>
   );
 }
 
