@@ -20,6 +20,7 @@ import {
   SvgIcon,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from "@mui/material";
+import moment from 'moment';
 import {DataGridLayout} from '../Layout/DataGridLayout'
 import { DataGrid } from "@mui/x-data-grid";
 const Reservation = () => {
@@ -33,18 +34,57 @@ const Reservation = () => {
       const columns = [
         
         { field: "id", headerName: "id", description: "", flex: 0.1 },
-        { field: "check_out_date", headerName: "Check Out", description: "", flex: 0.1 },
-        { field: "check_in_date", headerName: "Check In", description: "", flex: 0.1 },
+        { field: "customer", headerName: "Customer", description: "Customer Name", flex: 0.2, 
+        renderCell: (params)=>{
+    console.log("params")
+    return(
+      <>
+      <Typography variant="body2" component="body2">
+      {params.value.username}
+</Typography>
+        
+      </>
+    )
+  }
+
+},
+        { field: "check_in_date", headerName: "Check In", description: "", flex: 0.2,
+        renderCell: (params)=>{
+          console.log("checkout",params)
+          return(
+            <>
+           <Typography variant="body2" component="body2">
+           {moment(params.value).format('MMMM Do YYYY, h:mm:ss a')}
+</Typography>
+              
+            </>
+          )
+        } },
+        { field: "check_out_date", headerName: "Check Out", description: "", flex: 0.2,
+        renderCell: (params)=>{
+          console.log("checkout",params)
+          return(
+            <>
+           <Typography variant="body2" component="body2">
+           {moment(params.value).format('MMMM Do YYYY, h:mm:ss a')}
+</Typography>
+              
+            </>
+          )
+        }
+      
+      },
+        
              {
             field:"room",
             headerName:'Room',
             description:"Room Booked",
-            flex:0.2,
+            flex:0.1,
             renderCell: (params)=>{
-              console.log("params",params)
+              // console.log("params",params)
               return(
                 <>
-               <Typography variant="h6" component="h6">
+               <Typography variant="body2" component="body2">
                 {params.value.room_number}
 </Typography>
                   
@@ -52,20 +92,7 @@ const Reservation = () => {
               )
             },
           },
-        { field: "customer", headerName: "Customer", description: "Customer Name", flex: 0.1, 
-                  renderCell: (params)=>{
-              console.log("params")
-              return(
-                <>
-                <Typography variant="h6" component="h6">
-                {params.value.username}
-</Typography>
-                  
-                </>
-              )
-            }
-
-},
+       
       ]
   return (
     <div>

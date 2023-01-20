@@ -20,6 +20,9 @@ const MenuComponent = ({name, price, image, description}) => {
             {name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
+           {price}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
            {description}
           </Typography>
           
@@ -29,9 +32,7 @@ const MenuComponent = ({name, price, image, description}) => {
      
       
      
-        <Button size="small" color="primary">
-          Add
-        </Button>
+        
       </CardActions>
     </Card>
   )

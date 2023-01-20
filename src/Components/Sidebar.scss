@@ -4,7 +4,8 @@
     left: 0;
     height: 100vh;
     width: 300px;
-    background-color:#cccccc;
+    // background-color:#cccccc;
+    background-color:#d6e4e6a8;
 
     &__logo {
         display: grid;
@@ -46,7 +47,7 @@
             left: 50%;
             width: calc(100% - 30px);
             border-radius: 10px;
-            background-color: #308efe;
+            background-color: #3a6079;
             z-index: -1;
             transform: translateX(-50%);
             transition: 0.3s ease-in-out;

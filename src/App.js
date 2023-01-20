@@ -11,7 +11,8 @@ import {DashboardNavbar} from './Layout/DashboardNavbar';
 import {Routes, Route} from 'react-router-dom'
 import AppLayout from './Components/AppLayout';
 import Rooms from './Pages/Rooms';
-
+import OrderDetails from './Pages/OrderDetails';
+import CreateReservation from './Pages/CreateReservation';
 // const theme = withStyles({
 //   typography: {
 //     fontFamily: [
@@ -31,6 +32,8 @@ function App() {
       <Route path='/reservations' element={ <Reservation/>}/>
       <Route path='/rooms' element={ <Rooms/>}/>
       <Route path='/' element={ <Home/>}/>
+      <Route path='/orders/detail' element={ <OrderDetails/>}/>
+      <Route path='/rooms/create/reservation' element={<CreateReservation/>}/>
       </Route>
     
     </Routes>
