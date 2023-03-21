@@ -26,24 +26,25 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function RoomDetailsComp({room_number,price,description, max_occupancy, availability,room_type}) {
-  
+export default function RoomDetailsComp({ room_number, price, description, max_occupancy, availability, room_type, image}) {
 
- 
+
+
 
   return (
     <Card sx={{ maxWidth: 450 }}>
       <CardHeader
-        
+
         title={room_type}
-        
+
       />
       <CardMedia
         component="img"
         height="400"
-        image="https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+        image={image}
         alt={room_type}
       />
+      
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           Room Number:{room_number}
@@ -60,10 +61,10 @@ export default function RoomDetailsComp({room_number,price,description, max_occu
         <Typography variant="body2" color="text.secondary">
           Availability :{availability}
         </Typography>
-        
+
       </CardContent>
-      
-     
+
+
     </Card>
   );
 }

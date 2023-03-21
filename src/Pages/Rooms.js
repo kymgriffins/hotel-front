@@ -22,6 +22,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useAuth } from '../Auth/AuthProvider';
+
 const Rooms = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState("");
@@ -33,6 +35,9 @@ const Rooms = () => {
   const [occupancy, setOccupancy] = useState('')
   const [availability, setAvailability] = useState('')
   const [type, setType] = useState('')
+  const [images, setImages] = useState([]);
+  const [role, setRole] = useState("");
+  const { currentUser } = useAuth();
 
 
   const handleClickOpen = () => {
@@ -44,7 +49,7 @@ const Rooms = () => {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:8000/rooms").then((response) => {
+    axios.get("http://localhost:8000/rooms/").then((response) => {
       setRooms(response.data);
       setOpen(true);
     });
@@ -61,7 +66,7 @@ const Rooms = () => {
   );
   const createRoom= async (e)=>{
     e.preventDefault()
-    const data = { room_number:roomNo, price:price, description:description, availability:availability,max_occupancy:occupancy, room_type:type}
+    const data = { room_number:roomNo, price:price, description:description, availability:availability,max_occupancy:occupancy, room_type:type, images:images}
     try {
       const res = await axios.post('http://127.0.0.1:8000/rooms/', data).then(handleClose())
       console.log(res.data)
@@ -70,7 +75,30 @@ const Rooms = () => {
     }
 
   }
-
+  const handleImageUpload = (event) => {
+    console.log(event); // check what the event object looks like
+    const fileList = event.target.files;
+    const fileArray = Array.from(fileList);
+    setImages(fileArray);
+  };
+  console.log("IMG",images)
+  const userId = currentUser?.user_id;
+  axios.get(`http://127.0.0.1:8000/auth/register/`)
+    .then(response => {
+      const user = response.data.find(u => u.id === userId); // Filter user with matching user_id
+      // console.log(user); // user object
+      // console.log(user.roles);
+      setRole(user.roles);
+    })
+    .catch(error => {
+      // console.log(error);
+    });
+  
+  
+  
+  
+  
+  
   return (
     <div>
       <Container maxWidth="xl">
@@ -87,10 +115,16 @@ const Rooms = () => {
           <>
           <Grid container spacing={2}>
         <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Add Room 
-      </Button>
+          {
+
+          }
+      {role.includes('employee') && (
+  <Button variant="outlined" onClick={handleClickOpen}>
+    Add Room 
+  </Button>
+)}
       <Dialog open={poperOpen} onClose={handleClose}>
+      <form encType="multipart/form-data" onSubmit={createRoom}>
         <DialogTitle>Add Room</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -99,7 +133,7 @@ const Rooms = () => {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="number"
             label="Room Number"
             type="text"
             value={roomNo}
@@ -110,7 +144,7 @@ const Rooms = () => {
            <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="type"
             label="Room Type"
             type="text"
             value={type}
@@ -122,7 +156,7 @@ const Rooms = () => {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="price"
             label="Price"
             type="number"
             value={price}
@@ -134,7 +168,7 @@ const Rooms = () => {
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="description"
             label="Description"
             type="text"
             value={description}
@@ -146,7 +180,7 @@ const Rooms = () => {
            <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="occupancy"
             label="Maximum Occupancy"
             type="text"
             value={occupancy}
@@ -158,7 +192,7 @@ const Rooms = () => {
            <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="availability"
             label="Availability"
             type="text"
             value={availability}
@@ -167,6 +201,17 @@ const Rooms = () => {
             fullWidth
             variant="outlined"
           />
+           <TextField
+          autoFocus
+          margin="dense"
+          id="images"
+          label="Images"
+          type="file"
+          multiple
+          onChange={handleImageUpload}
+          fullWidth
+          variant="outlined"
+        />
 
 
         </DialogContent>
@@ -174,6 +219,7 @@ const Rooms = () => {
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={createRoom}>Add</Button>
         </DialogActions>
+        </form>
       </Dialog>
     </div>
 
@@ -184,6 +230,7 @@ const Rooms = () => {
                 <Grid container p={2} md={3}>
                   <div onClick={handleShowBooking(room)}>
                     <RoomComp
+                    image={room.images}
                       room_number={room.room_number}
                       room_type={room.room_type}
                       description={room.description}

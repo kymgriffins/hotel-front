@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea,CardActions , Button } from '@mui/material';
-const RoomComp = ({room_number,price,description, max_occupancy, availability,room_type}) => {
+const RoomComp = ({room_number,price,description, max_occupancy, availability,room_type, image}) => {
   return (
     <Box >
       
@@ -16,7 +16,7 @@ const RoomComp = ({room_number,price,description, max_occupancy, availability,ro
           component="img"
           height="140"
           
-          image="https://img.freepik.com/free-photo/flat-lay-batch-cooking-composition_23-2148765597.jpg?w=2000"
+          image={image}
           alt={"alt"}
         />
         <CardContent >
@@ -45,9 +45,9 @@ const RoomComp = ({room_number,price,description, max_occupancy, availability,ro
      
       
      
-        <Button size="small" color="primary">
-          Add
-        </Button>
+        {/* <Button size="small" color="primary">
+          Book
+        </Button> */}
       </CardActions>
     </Card>
     </Paper>

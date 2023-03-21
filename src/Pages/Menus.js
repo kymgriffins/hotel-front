@@ -20,6 +20,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import MenuComponent from "../Components/MenuComp";
+import { useAuth } from '../Auth/AuthProvider';
 const Menus = () => {
   const [menus, setMenus] = useState([]);
   const [name, setName] = useState('');
@@ -28,7 +29,10 @@ const Menus = () => {
   const [open, setOpen] = useState(false);
   const [poperOpen, setPopperOpen] = React.useState(false);
   const [basketNumbers, setBasketNumbers] = useState(0);
-  console.log("basket",basketNumbers);
+  const [images, setImages] = useState(null);
+  const [role, setRole] = useState("");
+  const { currentUser } = useAuth();
+  console.log("basket",images);
 
   const addToBasket = () => {
     setBasketNumbers(oldBasketNum => oldBasketNum + 1); //this is the correct way to update the state on click, bcs u wrote setBasketNumbers +1 which won't work
@@ -42,17 +46,26 @@ const Menus = () => {
   const handleClose = () => {
     setPopperOpen(false);
   };
-  const createMenu= async (e)=>{
-    e.preventDefault()
-    const data = { name:name, price:price, description:description}
-    try {
-      const res = await axios.post('http://127.0.0.1:8000/menu/', data).then(handleClose())
-      console.log(res.data)
-    } catch (e) {
-      alert(e)
-    }
+  const createMenu = async (e) => {
+    e.preventDefault();
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('price', price);
+  formData.append('description', description);
+  const imageBlob = new Blob([images.image], {type: 'image/jpeg'});
+  formData.append('images', imageBlob, images.image.name);
 
+  try {
+    const res = await axios.post("http://localhost:8000/menu/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log(res.data);
+  } catch (err) {
+    console.log(err);
   }
+  };
   useEffect(() => {
     axios.get("http://localhost:8000/menu/").then((response) => {
       setMenus(response.data);
@@ -60,11 +73,27 @@ const Menus = () => {
     });
   }, []);
   console.log("menus", menus);
-  const handleAddToCart = async (e)=>{
-    e.preventDefault();
-    
-     
-  }
+
+
+  const handleImageChange = (e) => {
+    setImages({
+      ...images,
+      image: e.target.files[0]
+    })
+  };
+  const userId = currentUser?.user_id;
+  axios.get(`http://127.0.0.1:8000/auth/register/`)
+    .then(response => {
+      const user = response.data.find(u => u.id === userId); // Filter user with matching user_id
+      console.log(user); // user object
+      console.log(user.roles);
+      setRole(user.roles);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  
+  console.log("IMG",images)
   return (
     <Container maxWidth="xl">
       
@@ -79,9 +108,11 @@ const Menus = () => {
         <>
         <Grid container spacing={2}>
         <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Add Food
-      </Button>
+        {role.includes('employee') && (
+  <Button variant="outlined" onClick={handleClickOpen}>
+    Add Menu
+  </Button>
+)}
       <Dialog open={poperOpen} onClose={handleClose}>
         <DialogTitle>Add Menu</DialogTitle>
         <DialogContent>
@@ -123,6 +154,18 @@ const Menus = () => {
             fullWidth
             variant="outlined"
           />
+            <TextField
+          autoFocus
+          margin="dense"
+          id="images"
+          label="Images"
+          type="file"
+          multiple
+          onChange={handleImageChange}
+          fullWidth
+          accept="image/png, image/jpeg" 
+          variant="outlined"
+        />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

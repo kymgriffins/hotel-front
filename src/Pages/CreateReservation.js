@@ -14,39 +14,73 @@ import { Grid, Container, Button } from "@material-ui/core";
 import { Paper , Box} from '@mui/material'
 import RoomDetailsComp from '../Components/RoomDetailsComp'
 import moment from 'moment';
+// import useAuth
+import { useAuth } from "../Auth/AuthProvider";
+import { Alert } from '@mui/material';
+
 
 const CreateReservation = () => {
+  const { currentUser } = useAuth();
   const location = useLocation();
   console.log(location.state);
   const [details] = useState(location.state);
-  const [checkIn, setCheckIn] = useState();
+  const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
+  const [alert, setAlert] = useState({
+    message: "",
+    severity: "success",
+    open: false,
+  });
   console.log("details", details);
   console.log("in", checkIn);
   console.log("out", setCheckOut);
-  const start = moment(checkIn).format('L')
-  const end = moment(checkOut).format('L')
+  const start = moment(checkIn).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+  const end = moment(checkOut).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
   // const daysCount = start.diff(end, 'days')
   // console.log("daysCount", daysCount)
 console.log("end, start", end, start)
+console.log("Current User", currentUser?.user_id)
   const createReservation= async (e)=>{
     e.preventDefault()
-    const data = { check_in_date: checkIn, check_out_date: checkOut, customer: 1 , room:1}
+    const data = { check_in_date: start, check_out_date: end, customer: currentUser?.user_id , room:details?.room?.room_number}
     try {
-      const res = await axios.post('http://127.0.0.1:8000/reservations/', data)
+      const res = await axios.post('http://localhost:8000/reservations/', {check_in_date: start, check_out_date: end, customer: currentUser?.user_id , room:details?.room?.id}).then(
+        (response) => {
+          setAlert({
+            message: "Reservation created successfully",
+            severity: "success",
+            open: true,
+          });
+        }
+      )
       console.log(res.data)
     } catch (e) {
       alert(e)
+      setAlert({
+        message: "Failed to create reservation",
+        severity: "error",
+        open: true,
+      });
     }
 
+  }
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlert({ ...alert, open: false });
   }
   return (
     <div>
       <Box sx={{ width: "100%" }}>
+      <Alert severity={alert.severity} onClose={handleCloseAlert} open={alert.open}>
+  {alert.message}
+</Alert>
         <Grid container p={2}>
           <Grid item md={6}>
          
             <RoomDetailsComp
+            image={`http://localhost:8000${details.images}`}
               room_number={details.room.room_number}
               room_type={details.room.room_type}
               description={details.room.description}
@@ -81,6 +115,7 @@ console.log("end, start", end, start)
                   </Button>
               </Stack>
             </LocalizationProvider>
+            <img src={`http://localhost:8000${details.images}`} alt={details.images}/>
           </Grid>
         </Grid>
        
