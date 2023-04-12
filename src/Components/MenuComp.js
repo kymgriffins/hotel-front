@@ -5,14 +5,15 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea,CardActions , Button } from '@mui/material';
 const MenuComponent = ({name, price, image, description}) => {
+  const imageURL = "https://res.cloudinary.com/dj9cp8xcv/";
+  const firstImage = image.length > 0 ? image[0].image : null;
   return (
     <Card sx={{ maxWidth: 345 }} >
       <CardActionArea sx={{ maxWidth: 250 }}>
-        <CardMedia
+      <CardMedia
           component="img"
           height="140"
-          
-          image="https://img.freepik.com/free-photo/flat-lay-batch-cooking-composition_23-2148765597.jpg?w=2000"
+          image={firstImage ? imageURL + firstImage : "https://via.placeholder.com/150"}
           alt={name}
         />
         <CardContent >

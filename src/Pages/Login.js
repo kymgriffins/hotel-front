@@ -23,6 +23,7 @@ const Login = () => {
 
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("");
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const { login } = useAuth();
@@ -39,7 +40,6 @@ const Login = () => {
     });
   };
   const { email, password } = formData;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -49,14 +49,19 @@ const Login = () => {
       // Extract the token from the response
       const token = res.data.access;
       console.log(token, "TOKEN");
-      console.log(res)
-      
-    login(token);
-      
+      console.log(res);
+
+      login(token);
+
       // Login the user by setting the token
-      
+      setSnackBarMessage("Login successful!");
+      setSnackBarOpen(true);
+      setSnackbarSeverity("success");
     } catch (err) {
       setError("Invalid email or password");
+      setSnackBarMessage("Invalid email or password");
+      setSnackBarOpen(true);
+      setSnackbarSeverity("danger");
     }
   };
   const handleSnackBarClose = (event, reason) => {
@@ -78,6 +83,20 @@ const Login = () => {
         autoHideDuration={6000}
         onClose={handleSnackBarClose}
         message={snackBarMessage}
+        severity={snackbarSeverity}
+        ContentProps={{
+          sx: {
+            backgroundColor:
+              snackbarSeverity === "success"
+                ? "#4caf50"
+                : snackbarSeverity === "error"
+                ? "#f44336"
+                : snackbarSeverity === "warning"
+                ? "#ff9800"
+                : "#2196f3",
+            color: "#ffffff",
+          },
+        }}
         action={
           <IconButton
             size="small"

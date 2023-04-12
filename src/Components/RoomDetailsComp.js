@@ -14,6 +14,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Carousel } from 'react-material-ui-carousel';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -26,45 +27,45 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function RoomDetailsComp({ room_number, price, description, max_occupancy, availability, room_type, image}) {
-
-
-
+function RoomDetailsComp({ room_number, price, description, max_occupancy, availability, room_type, image}) {
+  const imageURL = "https://res.cloudinary.com/dj9cp8xcv/";
+  const firstImage = image.length > 0 ? image[0].image : null;
+  console.log("IMG", image)
 
   return (
     <Card sx={{ maxWidth: 450 }}>
       <CardHeader
-
         title={room_type}
-
-      />
-      <CardMedia
-        component="img"
-        height="400"
-        image={image}
-        alt={room_type}
       />
       
+      
+          <CardMedia
+          component="img"
+          height="400"
+          image={firstImage ? imageURL + firstImage : "https://via.placeholder.com/150"}
+          alt={room_number}
+        />
+
+   
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          Room Number:{room_number}
+          Room Number: {room_number}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Price      :{price}
+          Price: {price}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Description :{description}
+          Description: {description}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Occupancy   :{max_occupancy}
+          Occupancy: {max_occupancy}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Availability :{availability}
+          Availability: {availability}
         </Typography>
-
       </CardContent>
-
-
     </Card>
   );
 }
+
+export default RoomDetailsComp;

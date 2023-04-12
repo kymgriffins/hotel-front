@@ -10,6 +10,8 @@ import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import InboxIcon from "@mui/icons-material/Inbox";
 import LocalHotelIcon from "@mui/icons-material/LocalHotel";
 import axios from "axios";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Typography } from "@mui/material";
 // import auth
 import { useAuth } from "../Auth/AuthProvider";
 const sidebarNavItems = [
@@ -48,6 +50,20 @@ const sidebarNavItems = [
     section: "orders",
     roles: ["admin", "employee"],
   },
+  {
+    display: "Logout",
+    icon: <LogoutIcon />,
+    to: "#",
+    section: "logout",
+    roles: ["admin", "employee","customer"],
+  },
+  // {
+  //   display: "Logout",
+  //   icon: <InboxIcon />,
+  //   to: "/logout",
+  //   section: "logout",
+  //   roles: ["admin", "employee","customer"],
+  // },
 ];
 
 const Sidebar = () => {
@@ -57,7 +73,7 @@ const Sidebar = () => {
   const indicatorRef = useRef();
   const location = useLocation();
   const [role, setRole] = useState("");
-  const { currentUser } = useAuth();
+  const { currentUser,logout } = useAuth();
   console.log(currentUser?.user_id, "USER");
   // find user object with the above user_id in http://127.0.0.1:8000/auth/register/
   const userId = currentUser?.user_id;
@@ -86,19 +102,23 @@ const Sidebar = () => {
 
   // change active index
   useEffect(() => {
-    const curPath = window.location.pathname.split("/")[1];
-    const activeItem = sidebarNavItems.findIndex(
-      (item) => item.section === curPath
-    );
+    const curPath = window.location.pathname.split('/')[1];
+    const activeItem = sidebarNavItems.findIndex(item => item.section === curPath);
     setActiveIndex(curPath.length === 0 ? 0 : activeItem);
-  }, [location]);
-  const filteredSidebarNavItems = sidebarNavItems.filter((item) =>
-    item.roles.includes(role)
-  );
+}, [location]);
+const filteredSidebarNavItems = sidebarNavItems.filter((item) =>
+item.roles.includes(role)
+);
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="sidebar">
-      <div className="sidebar__logo">HotelMan</div>
+      <div className="sidebar__logo" ><Typography variant="h5">
+      HotelMan
+    </Typography></div>
+
       <div ref={sidebarRef} className="sidebar__menu">
         <div
           ref={indicatorRef}
@@ -110,17 +130,18 @@ const Sidebar = () => {
           }}
         ></div>
         {filteredSidebarNavItems.map((item, index) => (
-          <Link to={item.to} key={index}>
-            <div
-              className={`sidebar__menu__item ${
-                activeIndex === index ? "active" : ""
-              }`}
-            >
-              <div className="sidebar__menu__item__icon">{item.icon}</div>
-              <div className="sidebar__menu__item__text">{item.display}</div>
-            </div>
-          </Link>
+           <Link to={item.to} key={index} onClick={item.section === "logout" ? handleLogout : null}>
+    <div
+      className={`sidebar__menu__item ${
+        activeIndex === index ? "active" : ""
+      }`}
+    >
+      <div className="sidebar__menu__item__icon">{item.icon}</div>
+      <div className="sidebar__menu__item__text">{item.display}</div>
+    </div>
+  </Link>
         ))}
+      
       </div>
     </div>
   );

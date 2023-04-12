@@ -23,13 +23,15 @@
             align-items: center;
             place-content: flex-start;
             padding: 1rem 3rem;
-            font-size: 1rem;
+            font-size: 1.5rem;
             font-weight: 400;
-            color: #555555;
+            color: #000000;
             transition: color 0.3s ease-in-out;
 
             &.active {
-                color: #fff;
+                color: rgb(44, 212, 196);
+                font-size: 1.7rem;
+                background-color:#e3e2e2;
             }
 
             &__icon {
@@ -47,7 +49,7 @@
             left: 50%;
             width: calc(100% - 30px);
             border-radius: 10px;
-            background-color: #1676b6;
+            // background-color:rgb(44, 212, 196);
             z-index: -1;
             transform: translateX(-50%);
             transition: 0.3s ease-in-out;

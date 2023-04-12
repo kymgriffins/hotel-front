@@ -7,7 +7,7 @@ export const AuthContext = createContext();
 
 // AuthProvider component
 const AuthProvider = ({ children }) => {
-  const [cookies, setCookie] = useCookies(['token']);
+  const [cookies, setCookie, removeCookie] = useCookies(['token']);
   const [currentUser, setCurrentUser] = useState(null);
   const [authState, setAuthState] = useState({
     token: cookies.token || null,
@@ -26,7 +26,7 @@ const AuthProvider = ({ children }) => {
       setCurrentUser(user);
     }
   }, [cookies.token]);
-
+ 
   const login = (token) => {
     const user = jwt_decode(token);
     setCookie("token", token, { path: "/" });
@@ -36,10 +36,12 @@ const AuthProvider = ({ children }) => {
 
 
   const logout = () => {
-    setCookie("token", null, { path: "/" });
+    removeCookie("token", { path: "/" });
     setAuthState({ token: null, authenticated: false });
     setCurrentUser(null);
+    // window.location.reload();
   };
+  
   const authContext = {
     token: authState.token,
     authenticated: authState.authenticated,

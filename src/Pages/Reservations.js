@@ -25,41 +25,60 @@ import { DataGridLayout } from '../Layout/DataGridLayout'
 import { DataGrid } from "@mui/x-data-grid";
 const Reservation = () => {
   const today = moment();
-  const [reservation, setReservation] = useState('')
+  const [reservation, setReservation] = useState([]);
   const [checkOutDate, setCheckOutDate]= useState("")
   const [checkInDate, setCheckInDate]= useState("")
+  const [daysLeft, setDaysLeft] = useState({});
+  const [userId, setUserId] = useState("")
+  const[name, setName] = useState("")
+  const [rooms,setRooms] = useState([])
+  const [users, setUsers] = useState([]);
+  console.log("NAMWE",users)
   useEffect(() => {
     axios.get("http://localhost:8000/reservations/").then((response) => {
-      // for all that have 0 days difference , don't display 
-      const reservations  = response.data.filter((reservation) => {
-        let checkOutDate = moment(reservation.checkOutDate);
-        let checkInDate = moment(reservation.checkInDate);
-        let diff = checkInDate.diff(checkOutDate, 'days');
-        if (diff === 0) {
-          return false;
-          }
-          return true;
-          
-      })
-      setReservation(reservations);
+      setReservation(response.data);
+      const daysLeftData = {};
+      response.data.forEach((reservation) => {
+        const daysLeft = moment(reservation.check_out_date).diff(today, 'days');
+        daysLeftData[reservation.id] = daysLeft;
+      });
+      setDaysLeft(daysLeftData);
+      findUsers()
+    
     });
   }, []);
+  useEffect(() => {
+    axios.get("http://localhost:8000/rooms/").then((response) => {
+     setRooms(response.data)
+    });
+  }, []);
+const findUsers = () => {
+  const res =axios
+  .get(`http://127.0.0.1:8000/auth/register/`)
+  .then((response) => {
+    const users = response.data.filter((user) => userId.includes(userId));
+    setUsers(users);
+   
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
   console.log("Reservation", reservation)
-  const daysRemaining = moment(checkOutDate).diff(today, 'days');
+
   const columns = [
 
     { field: "id", headerName: "id", description: "", flex: 0.1 },
     {
       field: "customer", headerName: "Customer Name", description: "Customer Name", flex: 0.2,
       renderCell: (params) => {
-        setCheckOutDate(params.value)
-        console.log("params")
+        const user = users.find((u) => u.id === params.value);
+        setUserId(params.value)
         return (
           <>
             <Typography variant="body2" component="body2">
-              {params.value.username}
+              {user ? user.username : "Unknown"}
             </Typography>
-
           </>
         )
       }
@@ -99,21 +118,22 @@ const Reservation = () => {
 
     {
       field: "room",
-      headerName: 'Room',
+      headerName: 'Room ',
       description: "Room Booked",
       flex: 0.1,
       renderCell: (params) => {
-        // console.log("params",params)
+        console.log(params)
+        const room = rooms.find((room) => room.id === params.row.room);
         return (
           <>
             <Typography variant="body2" component="body2">
-              {params.value.room_number}
+              {room ? room.room_number : 'N/A'}
             </Typography>
-
           </>
-        )
+        );
       },
     },
+    
     // {
     //   field: "room",
     //   headerName: 'Tyoe',
@@ -131,54 +151,37 @@ const Reservation = () => {
     //     )
     //   },
     // },
+    // {
+    //   field: "No of Days",
+    //   headerName: "Days",
+    //   flex: 0.1,
+    //   renderCell: (params) => {
+    //     const diffInDays = moment(params.row.check_out_date).diff(moment(params.row.check_in_date), 'days');
+    //     return (
+    //       <Typography variant="body2" component="body2">
+    //         {diffInDays}
+    //       </Typography>
+    //     );
+    //   },
+    // },
     {
-      field: "No of Days",
-      headerName: "Days",
-      description: "",
-      flex: 0.1,
-      renderCell: (params) => {
-        return (
-          <Typography variant="body2" component="body2">
-              {diffInDays}
-             </Typography>
-          // <Tooltip title="View more">
-          //   <IconButton
-          //     color="primary"
-          //     aria-label="view more"
-          //     onClick={handleShowOrder(params.row.id, params.row)}
-          //   >
-          //     <Visibility />
-          //   </IconButton>
-          // </Tooltip>
-        );
-      },
-    },
-    {
-      field: "Days Remaining",
+      field: "Days Left",
       headerName: "Days Left",
-      description: "",
       flex: 0.1,
       renderCell: (params) => {
+        const today = moment();
+        const daysRemaining = moment(params.row.check_out_date).diff(today, 'days');
         return (
           <Typography variant="body2" component="body2">
-              {daysRemaining}
-             </Typography>
-          // <Tooltip title="View more">
-          //   <IconButton
-          //     color="primary"
-          //     aria-label="view more"
-          //     onClick={handleShowOrder(params.row.id, params.row)}
-          //   >
-          //     <Visibility />
-          //   </IconButton>
-          // </Tooltip>
+            {daysRemaining}
+          </Typography>
         );
       },
     },
+    
 
   ]
-  const diffInDays = moment(checkOutDate).diff(moment(checkInDate), 'days');
-  console.log("diffInDays",diffInDays)
+
   return (
     <div>
       <Container maxWidth="xl">
